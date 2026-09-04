@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cálculo de Faltas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .passou {
+      background-color: #d4edda !important; /* Verde */
+      color: #155724;
+      font-weight: bold;
+    }
+    .faltando {
+      background-color: #f8d7da !important; /* Vermelho */
+      color: #721c24;
+      font-weight: bold;
+    }
+
+    @keyframes piscarTexto {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+    .mensagem-erro {
+      color: red;
+      font-weight: bold;
+      animation: piscarTexto 2s infinite;
+      margin-top: 5px;
+    }
+
+    .btn-verde {
+      background-color: #28a745 !important;
+      border-color: #28a745 !important;
+    }
+
+    .materia-linha input {
+      max-width: 140px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-4 mb-5">
+  <div class="card shadow p-4">
+    <h3 class="text-center mb-1">Cálculo de Faltas Restantes</h3>
+    <p class="text-center text-muted mb-4">Informe o total de faltas em cada matéria e clique em "Checar"</p>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped text-center align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Matéria</th>
+            <th>Aulas Totais</th>
+            <th>Total de Faltas</th>
+            <th>Dias Restantes</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaMaterias"></tbody>
+      </table>
+    </div>
+
+    <button id="btnChecar" class="btn btn-verde w-100 mt-2" onclick="checarFaltas()">Checar</button>
+  </div>
+</div>
+
+<script>
+  // Lista das matérias, na ordem fixa, com o total de aulas de cada uma
+  const materias = [
+    { nome: "Atividades Integradoras I", aulas: 72 },
+    { nome: "Banco de Dados", aulas: 72 },
+    { nome: "Biologia II", aulas: 72 },
+    { nome: "Desenvolvimento BACK-END", aulas: 144 },
+    { nome: "Desenvolvimento FRONT-END", aulas: 144 },
+    { nome: "Educação Física II", aulas: 72 },
+    { nome: "Filosofia", aulas: 72 },
+    { nome: "Física II", aulas: 72 },
+    { nome: "Geografia II", aulas: 72 },
+    { nome: "História II", aulas: 72 },
+    { nome: "Inglês Técnico II", aulas: 72 },
+    { nome: "Língua Portuguesa e Redação II", aulas: 144 },
+    { nome: "Matemática III", aulas: 144 },
+    { nome: "Química III", aulas: 72 }
+  ];
+
+  function montarTabela() {
+    const tabela = document.getElementById("tabelaMaterias");
+    tabela.innerHTML = "";
+
+    materias.forEach((materia, index) => {
+      const linha = document.createElement("tr");
+      linha.classList.add("materia-linha");
+      linha.innerHTML = `
+        <td class="text-start">${materia.nome}</td>
+        <td>${materia.aulas}</td>
+        <td>
+          <input type="number" id="faltas${index}" class="form-control" min="0" step="1"
+                 placeholder="0">
+        </td>
+        <td id="resultado${index}">-</td>
+      `;
+      tabela.appendChild(linha);
+    });
+  }
+
+  function checarFaltas() {
+    materias.forEach((materia, index) => {
+      const inputFaltas = document.getElementById(`faltas${index}`);
+      const celulaResultado = document.getElementById(`resultado${index}`);
+
+      if (inputFaltas.value === "") {
+        return;
+      }
+
+      const faltas = parseFloat(inputFaltas.value) || 0;
+      const max = materia.aulas * 0.25;
+      const faltasR = max - faltas;
+      const diasR = faltasR / 2;
+
+      if (diasR >= 0) {
+        celulaResultado.textContent = `Pode faltar mais ${diasR.toFixed(1)} dia(s)`;
+        celulaResultado.className = "passou";
+      } else {
+        celulaResultado.textContent = `Excedeu em ${Math.abs(diasR).toFixed(1)} dia(s)`;
+        celulaResultado.className = "faltando";
+      }
+    });
+  }
+
+  montarTabela();
+</script>
+
+</body>
+</html>
