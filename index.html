@@ -57,6 +57,17 @@
           </tr>
         </thead>
         <tbody id="tabelaMaterias"></tbody>
+        <tfoot>
+          <tr class="materia-linha table-secondary fw-bold">
+            <td class="text-start">Totais</td>
+            <td>1296</td>
+            <td>
+              <input type="number" id="faltasTotais" class="form-control" min="0" step="1"
+                     placeholder="0">
+            </td>
+            <td id="resultadoTotais">-</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
 
@@ -125,6 +136,24 @@
         celulaResultado.className = "faltando";
       }
     });
+
+    const inputTotais = document.getElementById("faltasTotais");
+    const celulaTotais = document.getElementById("resultadoTotais");
+
+    if (inputTotais.value !== "") {
+      const faltasTotais = parseFloat(inputTotais.value) || 0;
+      const maxTotais = 1296 * 0.25;
+      const faltasRTotais = maxTotais - faltasTotais;
+      const diasRTotais = faltasRTotais / 2;
+
+      if (diasRTotais >= 0) {
+        celulaTotais.textContent = `Pode faltar mais ${diasRTotais.toFixed(1)} dia(s)`;
+        celulaTotais.className = "passou";
+      } else {
+        celulaTotais.textContent = `Excedeu em ${Math.abs(diasRTotais).toFixed(1)} dia(s)`;
+        celulaTotais.className = "faltando";
+      }
+    }
   }
 
   montarTabela();
